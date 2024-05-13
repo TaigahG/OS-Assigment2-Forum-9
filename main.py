@@ -5,7 +5,6 @@ def read_requests(file_path):
         requests = [int(line.strip()) for line in file.readlines()]
     return requests
 
-
 def fcfs(requests, start):
     head_movements = 0
     current_position = start
@@ -13,22 +12,17 @@ def fcfs(requests, start):
         head_movements += abs(current_position - request)
         current_position = request
     return head_movements
-
 def scan(requests, start):
     head_movements = 0
     current_position = start
     requests.sort()
-    # Move towards the higher end
     upper_requests = [r for r in requests if r >= current_position]
     lower_requests = [r for r in requests if r < current_position][::-1]
-
-    # Service upper requests first
     for request in upper_requests:
         head_movements += abs(current_position - request)
         current_position = request
-    # Then service lower requests
     if lower_requests:
-        head_movements += abs(current_position - 0)  # move to 0
+        head_movements += abs(current_position - 0) 
         current_position = 0
     for request in lower_requests:
         head_movements += abs(current_position - request)
@@ -40,9 +34,7 @@ def optimized_scan(requests, start, total_cylinders):
     current_position = start
     requests.sort()
     
-    # Determine the optimal direction by finding the closest endpoint
     if start - 0 < total_cylinders - start:
-        # If closer to 0, service lower first, then upper
         lower_requests = [r for r in requests if r <= current_position]
         upper_requests = [r for r in requests if r > current_position]
         
@@ -50,13 +42,12 @@ def optimized_scan(requests, start, total_cylinders):
             head_movements += abs(current_position - request)
             current_position = request
         if upper_requests:
-            head_movements += abs(current_position - 0)  # move to 0 if needed
+            head_movements += abs(current_position - 0) 
             current_position = 0
         for request in upper_requests:
             head_movements += abs(current_position - request)
             current_position = request
     else:
-        # If closer to max, service upper first, then lower
         upper_requests = [r for r in requests if r >= current_position]
         lower_requests = [r for r in requests if r < current_position]
         
@@ -79,13 +70,11 @@ def c_scan(requests, start):
     upper_requests = [r for r in requests if r >= current_position]
     lower_requests = [r for r in requests if r < current_position]
 
-    # Service upper requests first
     for request in upper_requests:
         head_movements += abs(current_position - request)
         current_position = request
-    # Jump to the lowest request
     if lower_requests:
-        head_movements += abs(current_position - 4999) + 4999  # jump to end and to start
+        head_movements += abs(current_position - 4999) + 4999  
         current_position = 0
     for request in lower_requests:
         head_movements += abs(current_position - request)
@@ -96,21 +85,16 @@ def optimized_c_scan(requests, start, total_cylinders):
     head_movements = 0
     current_position = start
     requests.sort()
-    
-    # Decide to start regular C-SCAN or jump to the start
-    if start - 0 > total_cylinders - start:  # If closer to the end, might as well jump to 0
-        head_movements += abs(current_position - 0)  # Move to 0 first
+    if start - 0 > total_cylinders - start:
+        head_movements += abs(current_position - 0)  
         current_position = 0
-    
-    # Proceed with normal C-SCAN from the chosen start point
     upper_requests = [r for r in requests if r >= current_position]
     lower_requests = [r for r in requests if r < current_position]
-
     for request in upper_requests:
         head_movements += abs(current_position - request)
         current_position = request
-    if lower_requests:  # After servicing up to the end, jump to the start and continue
-        head_movements += abs(current_position - total_cylinders)  # Move to end
+    if lower_requests: 
+        head_movements += abs(current_position - total_cylinders)  
         current_position = 0
         for request in lower_requests:
             head_movements += abs(current_position - request)
